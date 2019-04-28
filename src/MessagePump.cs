@@ -29,15 +29,25 @@ namespace Spartademo
             Microsoft.Extensions.Logging.ILogger log)
         {
             log.LogInformation($"Pump started with message: `{ messagePayload }`");
-            var message = new MessageBase(messagePayload);
+            var message = new MessageBase(messagePayload, typeof(MessagePump));
 
-            var pumps = message.Payload switch 
+            var pumps = default(Task);
+            switch(message.Payload) 
             {
-                INotification notification => HandleActivity.HandleNotification(notification, eventStream, commandStore, log),
-                IEvent @event => HandleActivity.HandleEvent(@event, eventStream, objectStore, log),
-                ICommand command => HandleActivity.HandleCommand(command, eventStream, eventStore, eventQueue, log),
-                IQuery query => HandleActivity.HandleQuery(query, eventStream, objectStore, log),
-                _ => throw new IndexOutOfRangeException()
+                case INotification notification: 
+                        pumps = HandleActivity.HandleNotification(notification, eventStream, commandStore, log);
+                        break;
+                case IEvent @event: 
+                        pumps = HandleActivity.HandleEvent(@event, eventStream, objectStore, log);
+                        break;
+                case ICommand command: 
+                        pumps = HandleActivity.HandleCommand(command, eventStream, eventStore, eventQueue, log);
+                        break;
+                case IQuery query: 
+                        pumps = HandleActivity.HandleQuery(query, eventStream, objectStore, log);
+                        break;
+                default: 
+                        throw new IndexOutOfRangeException();
             };
 
             await pumps.ConfigureAwait(false);

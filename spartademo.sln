@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28809.33
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "spartademo", "src\spartademo.csproj", "{CE06162C-06D0-4A9B-96C4-26F2701DF69B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "spartademotest", "tests\spartademotest\spartademotest.csproj", "{545A3E90-C2E2-4279-B5E5-89A19A83F7D0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CE06162C-06D0-4A9B-96C4-26F2701DF69B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE06162C-06D0-4A9B-96C4-26F2701DF69B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE06162C-06D0-4A9B-96C4-26F2701DF69B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE06162C-06D0-4A9B-96C4-26F2701DF69B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{545A3E90-C2E2-4279-B5E5-89A19A83F7D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{545A3E90-C2E2-4279-B5E5-89A19A83F7D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{545A3E90-C2E2-4279-B5E5-89A19A83F7D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{545A3E90-C2E2-4279-B5E5-89A19A83F7D0}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {94E021D5-4022-455E-BAF2-36532921AE55}
+	EndGlobalSection
+EndGlobal

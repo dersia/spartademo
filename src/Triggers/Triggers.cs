@@ -14,17 +14,55 @@ using Newtonsoft.Json;
 using SiaConsulting.Azure.WebJobs.Extensions.EventStoreExtension.Streams;
 using SiaConsulting.EO.Abstractions;
 using SiaConsulting.EO;
+using Spartademo.ContextLoaders;
+using Spartademo.DTOs.Commands;
+using Spartademo.Processors;
+using Spartademo.DTOs.Notifications;
 
 namespace Spartademo
 {
     public static class Triggers
     {
+        static Triggers()
+        {
+            var registerBankProfilContextLoader = new RegisterBankProfilCommandContextLoader();
+            var registerBankProfilProcessor = new RegisterBankProfilCommandProcessor();
+            EoRegistry.RegisterCommandPump<RegisterBankProfilCommand>(
+                new Pump
+                (registerBankProfilContextLoader, registerBankProfilProcessor));
+
+            var registerFitnessProfilContextLoader = new RegisterFitnessProfilCommandContextLoader();
+            var registerFitnessProfilProcessor = new RegisterFitnessProfilCommandProcessor();
+            EoRegistry.RegisterCommandPump<RegisterFitnessProfilCommand>(
+                new Pump
+                (registerFitnessProfilContextLoader, registerFitnessProfilProcessor));
+
+            var assignPaymentCommandContextLoader = new AssignPaymentCommandContextLoader();
+            var assignPaymentProcessor = new AssignPaymentCommandProcessor();
+            EoRegistry.RegisterCommandPump<AssignPaymentCommand>(
+                new Pump
+                (assignPaymentCommandContextLoader, assignPaymentProcessor));
+
+            var assignNutritionalValuesCommandContextLoader = new AssignNutritionalValuesCommandContextLoader();
+            var assignNutritionalValuesProcessor = new AssignNutritionalValuesCommandProcessor();
+            EoRegistry.RegisterCommandPump<AssignNutritionalValuesCommand>(
+                new Pump
+                (assignNutritionalValuesCommandContextLoader, assignNutritionalValuesProcessor));
+
+            EoRegistry.RegisterNotificationPump<NahrungAufgenommenNotification>(
+                new Pump(
+                    new NahrungAufgenommenContextLoader(), 
+                    new NahrungAufgenommenNotficationProcessor()
+                )
+            );
+        }
+
         [FunctionName("MessagePump_HttpTrigger")]
         public static async Task<IActionResult> HttpStart(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post")]HttpRequestMessage req,
             [EventStoreStreams(ConnectionStringSetting = "EventStoreEndpoint", StreamName = "eoStream")] IList<ResolvedEvent> eventStream,
             [EventStoreStreams(ConnectionStringSetting = "EventStoreEndpoint", StreamName = "eoStream")] IAsyncCollector<EventData> eventStore,
-            [Queue("event-queue", Connection = "StorageEndpoint")] IAsyncCollector<IEvent> eventQueue,
+            [Queue("event-queue2", Connection = "StorageEndpoint")] IAsyncCollector<IEvent> eventQueue,
             [CosmosDB("eo","readModels", ConnectionStringSetting = "CosmosEndpoint")]IAsyncCollector<dynamic> objectStore,
             [ServiceBus("command-queue", Connection = "SbEndpoint")] IAsyncCollector<ICommand> commandStore,
             Microsoft.Extensions.Logging.ILogger log)
@@ -50,7 +88,7 @@ namespace Spartademo
             [ServiceBusTrigger("command-queue", Connection = "SbEndpoint")] Message message,
             [EventStoreStreams(ConnectionStringSetting = "EventStoreEndpoint", StreamName = "eoStream")] IList<ResolvedEvent> eventStream,
             [EventStoreStreams(ConnectionStringSetting = "EventStoreEndpoint", StreamName = "eoStream")] IAsyncCollector<EventData> eventStore,
-            [Queue("event-queue", Connection = "StorageEndpoint")] IAsyncCollector<IEvent> eventQueue,
+            [Queue("event-queue2", Connection = "StorageEndpoint")] IAsyncCollector<IEvent> eventQueue,
             [CosmosDB("eo","readModels", ConnectionStringSetting = "CosmosEndpoint")]IAsyncCollector<dynamic> objectStore,
             [ServiceBus("command-queue", Connection = "SbEndpoint")] IAsyncCollector<ICommand> commandStore,
             Microsoft.Extensions.Logging.ILogger log) 
@@ -71,13 +109,13 @@ namespace Spartademo
         [Singleton(Mode = SingletonMode.Listener)]
         [FunctionName("MessagePump_QueueTrigger")]
         public static async Task QueueStart(
-            [QueueTrigger("event-queue", Connection = "StorageEndpoint")] string message,
+            [QueueTrigger("event-queue2", Connection = "StorageEndpoint")] string message,
             [EventStoreStreams(ConnectionStringSetting = "EventStoreEndpoint", StreamName = "eoStream")] IList<ResolvedEvent> eventStream,
             [EventStoreStreams(ConnectionStringSetting = "EventStoreEndpoint", StreamName = "eoStream")] IAsyncCollector<EventData> eventStore,
-            [Queue("event-queue", Connection = "StorageEndpoint")] IAsyncCollector<IEvent> eventQueue,
-            [CosmosDB("eo","readModels", ConnectionStringSetting = "CosmosEndpoint")]IAsyncCollector<dynamic> objectStore,
+            [Queue("event-queue2", Connection = "StorageEndpoint")] IAsyncCollector<IEvent> eventQueue,
+            [CosmosDB("eo", "readModels", ConnectionStringSetting = "CosmosEndpoint")]IAsyncCollector<dynamic> objectStore,
             [ServiceBus("command-queue", Connection = "SbEndpoint")] IAsyncCollector<ICommand> commandStore,
-            Microsoft.Extensions.Logging.ILogger log) 
+            Microsoft.Extensions.Logging.ILogger log)
         {
             await StartMessagePump(
                 message,
